@@ -1,0 +1,14 @@
+instance inst_dbn {
+    domain = prop_dbn;
+    non-fluents = nf_dbn;
+
+    init-state {
+        p = true;
+        q = false;
+        r;
+    };
+
+    max-nondef-actions = 1;
+    horizon = 20;
+    discount = 0.9;
+}

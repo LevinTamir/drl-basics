@@ -1,0 +1,32 @@
+non-fluents nf_casino{
+    domain = casino_mdp;
+
+    non-fluents{
+        // Probabilities with action a1
+        P_0s1_a1 = 0.5; // Probability of transitioning to s1 from s0
+        P_1s0_a1 = 0.666666666666667; // Probability of transitioning to s0 from s1
+        P_2s0_a1 = 0.75; // Probability of transitioning to s0 from s2
+
+        // Probabilities with action a2
+        P_0s1_a2 = 0.125; // Probability of transitioning to s1 from s0
+        P_1s0_a2 = 0.5; // Probability of transitioning to s0 from s1
+        P_2s0_a2 = 0.75; // Probability of transitioning to s2 from s0
+    };
+
+}
+
+// Instance file for Casino MDP
+instance casino_instance {
+    domain = casino_mdp;
+
+    non-fluents = nf_casino;
+
+    init-state {
+        state = s0;
+    };
+    horizon = 3;
+
+    // Maximum allowed reward - set to a high value
+    max-nondef-actions = 1;
+    discount= 1.0;
+}

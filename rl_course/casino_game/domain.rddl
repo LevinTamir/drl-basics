@@ -1,0 +1,79 @@
+domain casino_mdp {
+    requirements = {
+        reward-stochastic
+    };
+
+    types {
+        state : { @s0, @s1, @s2 };  // Define state_type as a type (not the specific values)
+        action : { @a1, @a2 } ; // Define action_type as a type
+    };
+
+    pvariables{
+        // Define the state variable
+        state : {state-fluent, state, default = @s0}; // Define the state variable
+        // Define the action variable
+        action : {action-fluent, action, default = @a2}; // Define the action variable
+
+        // Define the probabilities as non-fluents:
+        // Probabilities with action a1
+        P_0s1_a1 : {non-fluent, real, default = 0.5}; // Probability of transitioning to s1 from s0
+        P_1s0_a1 : {non-fluent, real, default = 0.66667}; // Probability of transitioning to s0 from s1
+        P_2s0_a1 : {non-fluent, real, default = 0.75}; // Probability of transitioning to s0 from s2
+
+        // Probabilities with action a2
+        P_0s1_a2 : {non-fluent, real, default = 0.125}; // Probability of transitioning to s1 from s0
+        P_1s0_a2 : {non-fluent, real, default = 0.5}; // Probability of transitioning to s0 from s1
+        P_2s0_a2 : {non-fluent, real, default = 0.75}; // Probability of transitioning to s2 from s0
+    };
+
+    cpfs{
+        state' =
+            if (action == @a1) then switch(state){
+                case @s0: Discrete(state,
+                        @s0 : 0,
+                        @s1 : P_0s1_a1,
+                        @s2 : 1-P_0s1_a1
+                    ),
+                case @s1: Discrete(state,
+                        @s0 : P_1s0_a1,
+                        @s1 : 0,
+                        @s2 : 1-P_1s0_a1
+                    ),
+                case @s2: Discrete(state,
+                        @s0 : P_2s0_a1,
+                        @s1 : 1-P_2s0_a1,
+                        @s2 : 0
+                    )
+                }
+            else switch(state){
+                case @s0: Discrete(state,
+                        @s0 : 0,
+                        @s1 : P_0s1_a2,
+                        @s2 : 1-P_0s1_a2
+                    ),
+                case @s1: Discrete(state,
+                        @s0 : P_1s0_a2,
+                        @s1 : 0,
+                        @s2 : 1-P_1s0_a2
+                    ),
+                case @s2: Discrete(state,
+                        @s0 : P_2s0_a2,
+                        @s1 : 1-P_2s0_a2,
+                        @s2 : 0
+                    )
+                };
+    };
+
+    // Define the reward function
+    reward =
+        if (action == @a1) then switch(state){
+            case @s0: Bernoulli(0.2),
+            case @s1: Normal(1,1),
+            case @s2: Binomial(5,0.1)
+        }
+        else switch(state){
+            case @s0: Bernoulli(0.7),
+            case @s1: Normal(0,1),
+            case @s2: Binomial(7,1/14)
+        };
+}
